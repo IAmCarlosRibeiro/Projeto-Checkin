@@ -1,177 +1,226 @@
-/*===== VARIABLES CSS =====*/
+/* stylerelatorio.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
 :root {
+    /* Cores */
+    --first-color: #1b9aaa;
+    --first-color-hover: #157a8a;
+    --second-color: #050505;
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --text-color: #333;
+    --border-color: #dcdcdc;
+}
 
-  /* Cores */
-  --first-color: #1b9aaa;
-  --second-color: #050505;
-  --third-color: #dddbcb;
-  --fourth-color: #f5f1e3;
-
+* {
+    box-sizing: border-box;
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
+    padding: 2% 7.5%; 
 }
 
-.container {
-    max-width: 800px;
+/* Container Principal */
+.main-container {
+    max-width: 100%;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px; /* Adicionado para suavizar os cantos do contêiner */
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
 }
 
-h1 {
+.header-section {
     text-align: center;
-    margin-bottom: 20px;
-    color: #000000;
-    font-size: 2.5em; /* Adicionado para aumentar o tamanho do título */
-}
-
-form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-direction: column;
-}
-
-label {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-input[type="date"] {
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    width: 100%;
-    font-size: 1.2em; /* Adicionado para aumentar o tamanho da fonte do campo de entrada */
-}
-
-button[type="submit"] {
-    padding: 10px 20px;
-    background-color: var(--first-color);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-    width: 100%;
-    font-size: 1.2em; /* Adicionado para aumentar o tamanho da fonte do botão */
-}
-
-button[type="submit"]:hover {
-    background-color: var(--first-color);
-}
-
-table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 20px;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-th {
-    background-color: var(--first-color);
-    color: #fff;
-}
-
-tr:nth-child(even) {
-    background-color: #cecece;
-}
-
-tr:hover {
-    background-color: #ddd;
-}
-
-.bodyform {
-    margin-left: 20%;
-    margin-right: 20%;
-}
-
-form {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    margin: 0.6rem 0;
-    justify-content: space-between;
-    flex-direction: column;
-}
-
-.form-group {
     margin-bottom: 10px;
-    margin: 0.6rem 0;
+}
+
+.header-section h1 {
+    font-size: 2.2rem;
+    color: var(--second-color);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* =========================================
+   A "MOLDURA" BONITA (CARD)
+   ========================================= */
+.card {
+    background-color: var(--card-bg);
+    border-radius: 8px; /* Cantos arredondados */
+    padding: 30px;
+    
+    /* Borda sutil cinza ao redor */
+    border: 1px solid var(--border-color);
+    
+    /* Detalhe estético: Barra colorida no topo da moldura */
+    border-top: 5px solid var(--first-color);
+    
+    /* Sombra suave para dar profundidade (efeito 3D leve) */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Título dentro dos cards (ex: "Visão Mensal") */
+.card h2 {
+    margin-top: 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0; /* Linha fina abaixo do título */
+    color: var(--first-color);
+    font-size: 1.5rem;
+}
+
+/* =========================================
+   FORMULÁRIO (ESTILO ORIGINAL RESTAURADO)
+   ========================================= */
+.bodyform {
+    max-width: 500px; 
+    margin: 0 auto; 
+}
+
+form {
+    display: flex;
+    flex-direction: column;
     width: 100%;
 }
 
 label {
-    margin: 0.6rem 0;
-    font-weight: bold;
+    font-weight: 500;
+    margin-bottom: 8px;
+    margin-top: 15px;
+    display: block;
+    color: var(--second-color);
 }
 
 input[type="date"] {
-    padding: 10px;
-    border-radius: 4px;
+    padding: 12px;
+    border-radius: 6px;
     border: 1px solid #ccc;
     width: 100%;
+    font-size: 1rem;
+    background: #fdfdfd;
 }
 
-button[type="submit"] {
-    padding: 10px 20px;
-    background-color: var(--first-color);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-    width: 100%;
-}
-
-button[type="submit"]:hover {
-    background-color: #0056b3;
+/* Input CPF */
+.input-box {
+    margin-top: 15px;
 }
 
 .input-cpf {
-    margin: 0.6rem 0;
-    padding: 0.8rem 1.2rem;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 1px 1px 6px #0000001c;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc; /* Borda mais definida */
     width: 100%;
+    font-size: 1rem;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06); /* Sombra interna sutil */
 }
 
-.input-cpf:hover {
-     background-color: #eeeeee75;
- }
+.input-cpf:focus-visible, 
+input[type="date"]:focus {
+    outline: none;
+    border-color: var(--first-color);
+    box-shadow: 0 0 0 3px rgba(27, 154, 170, 0.2); /* Halo ao focar */
+}
 
- .input-cpf:focus-visible {
-       outline: 1px solid var(--first-color);
- }
+/* Botão */
+button[type="submit"] {
+    padding: 14px 20px;
+    background-color: var(--first-color);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 30px;
+    width: 100%;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background 0.3s ease, transform 0.1s;
+    box-shadow: 0 4px 6px rgba(27, 154, 170, 0.3);
+}
 
- .input-cpf label,
- .gender-title h6 {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #000000c0;
- }
+button[type="submit"]:hover {
+    background-color: var(--first-color-hover);
+}
 
- .input-cpf::placeholder {
-     color: #000000be;
- }
+button[type="submit"]:active {
+    transform: translateY(1px);
+}
 
-/* Adicionado para alinhar o rótulo à esquerda do campo de entrada */
-.input-box {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* =========================================
+   CALENDÁRIO E TABELA
+   ========================================= */
+
+#calendar {
+    max-width: 100%;
+    margin: 0 auto;
+    font-family: 'Roboto', sans-serif;
+    /* Pequeno ajuste para o calendário não colar nas bordas do card */
+    padding: 5px; 
+}
+
+/* FullCalendar Customização */
+.fc-event {
+    background-color: var(--first-color);
+    border: none;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 0.85em;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.fc-toolbar-title {
+    font-size: 1.4em !important;
+    color: #444;
+}
+
+.fc-button-primary {
+    background-color: #555 !important;
+    border-color: #555 !important;
+    text-transform: capitalize;
+}
+.fc-button-primary:hover {
+    background-color: #333 !important;
+}
+.fc-day-today {
+    background-color: rgba(27, 154, 170, 0.1) !important; /* Destaca o dia atual com a cor do tema */
+}
+
+/* Tabela */
+.table-container {
+    overflow-x: auto;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+table th {
+    background-color: var(--first-color);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
 }
