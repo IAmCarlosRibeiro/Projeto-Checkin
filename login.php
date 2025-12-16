@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <title>Página de Login</title>
     <link rel="stylesheet" href="./styles/stylelogin.css">
-    <link rel="shortcut icon" href="./styles/raposa.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="./styles/clock.ico" type="image/x-icon">
 </head>
 
 <body>

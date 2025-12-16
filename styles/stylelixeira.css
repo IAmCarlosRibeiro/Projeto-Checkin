@@ -4,7 +4,6 @@
 :root {
     /* Cores */
     --first-color: #1b9aaa;
-    --first-color-hover: #157a8a;
     --second-color: #050505;
     --bg-color: #f0f2f5;
     --card-bg: #ffffff;
@@ -61,7 +60,7 @@ body {
     border-top: 5px solid var(--first-color);
     
     /* Sombra suave para dar profundidade (efeito 3D leve) */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px var(--first-color);
 }
 
 /* Título dentro dos cards (ex: "Visão Mensal") */
@@ -128,7 +127,7 @@ input[type="date"]:focus {
 /* Botão */
 button[type="submit"] {
     padding: 14px 20px;
-    background-color: var(--first-color);
+    background-color: var(--second-color);
     color: #fff;
     border: none;
     border-radius: 6px;
@@ -143,7 +142,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: var(--first-color-hover);
+    background-color: var(--first-color);
 }
 
 button[type="submit"]:active {

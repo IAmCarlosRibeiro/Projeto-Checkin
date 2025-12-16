@@ -7,7 +7,7 @@
     <title>Relatórios</title>
 
     <link rel="stylesheet" href="./styles/stylerelatorio.css">
-    <link rel="shortcut icon" href="./styles/raposa.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="./styles/clock.ico" type="image/x-icon">
 
     <!-- FullCalendar CSS e JS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>

@@ -1,11 +1,8 @@
 <?php
-    // Verifica se a mensagem est� presente na URL e � um valor v�lido
+    // Verifica se a mensagem está presente na URL
     if (isset($_GET['message'])) {
         $message = $_GET['message'];
-
-        // Verifica se a mensagem � um dos valores permitidos (1, 2, 3 ou 4)
         if (in_array($message, array(1, 2, 3, 4))) {
-            // Define a URL de redirecionamento ap�s 5 segundos
             echo "<script>
                 setTimeout(function() {
                     window.location.href = 'index.php';
@@ -21,86 +18,123 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Seus arquivos de estilo -->
     <link rel="stylesheet" type="text/css" href="./styles/stylepontos.css">
-    <link rel="stylesheet" type="text/css" href="./styles/style/style.css">
-    <link rel="shortcut icon" href="./styles/raposa.ico" type="image/x-icon">
+    <!-- Adicionei de volta caso você tenha estilos lá -->
+    <link rel="stylesheet" type="text/css" href="./styles/style/style.css"> 
+    
+    <link rel="shortcut icon" href="./styles/clock.ico" type="image/x-icon">
     <title>Controle de Ponto</title>
 </head>
 <body>
     <div class="container">
-        <div class="form-image">
-            
-        </div>
+        
+        <!-- Lado Esquerdo: Imagem -->
+        <div class="form-image"></div>
+
+        <!-- Lado Direito: Formulário -->
         <div class="form">
+            
+            <!-- Botões do Topo (Agrupados) -->
+            <div class="top-buttons">
+                <a href="relatorios.php" class="btn-top">Relatórios</a>
+                <a href="adm.php" class="btn-top">Dashboard</a>
+            </div>
+
             <form action="backpontos.php" method="post" id="batepontoForm">
                 <div class="form-header">
                     <div class="title">
-                        <h1>Controle de Ponto </h1>
+                        <h1>Controle de Ponto</h1>
                     </div>
-                    
                 </div>
+
+                <!-- ESTRUTURA DOS INPUTS -->
                 <div class="input-box">
                     <div class="form__group field">
-                        <input type="text" class="form__field" placeholder="Name" id="cpf" name="cpf" required>
+                        <!-- ADICIONADO MAXLENGTH 14 PARA CABER A FORMATAÇÃO -->
+                        <input type="text" class="form__field" placeholder="CPF" id="cpf" name="cpf" required maxlength="14">
                         <label for="cpf" class="form__label">CPF</label>
                     </div>
+                    
                     <div class="form__group field">
-                        <input type="password" class="form__field" placeholder="Name" id="password" name="password" required>
-                        <label for="name" for="password" class="form__label">Senha</label>
+                        <input type="password" class="form__field" placeholder="Senha" id="password" name="password" required>
+                        <label for="password" class="form__label">Senha</label>
                     </div>
-                    <div class="login-button">
-                        <button type="button" id="submitButton"><a>Entrar</a></button>
-                        <button><a href="cadastro.php">Cadastre-se</a></button>
-                        <button><a href="relatorios.php">Relatorios</a></button>
+
+                    <!-- Link Esqueci a Senha -->
+                    <div class="forgot-pass">
+                        <a href="#">Esqueci a senha</a>
                     </div>
-                    <br>
-                    <br>
-                    <br>
-                    <div class="infos">
-                        <?php
-                        date_default_timezone_set('America/Sao_Paulo');
-                        if (isset($_GET['message'])) {
-                            $message = $_GET['message'];
-                            if ($message == 1) {
-                                echo '<div class="hora"><h3>Entrada: </h3><span>' . date("d/m/y H:i:s") . '</span></div>';
-                            }
-                            if ($message == 2) {
-                                echo '<div class="hora"><h3>Saída: </h3><span>' . date("d/m/y H:i:s") . '</span></div>';
-                            }
-                            if ($message == 3) {
-                                echo "<script>alert('Houve um erro no banco de dados');</script>";
-                            }
-                            if ($message == 4) {
-                                echo "<script>alert('Usuário não encontrado, CPF ou Senha incorretos');</script>";
-                            }
-                        }
-                        ?>
+                </div>
+
+                <div class="action-buttons">
+                    <!-- Botão Principal -->
+                    <button type="button" id="submitButton">Entrar</button>
+                    
+                    <!-- Link Cadastro -->
+                    <div class="register-link">
+                        <span>Não tem uma conta? </span>
+                        <a href="cadastro.php">Cadastre-se</a>
                     </div>
+                </div>
+
+                <!-- Área de Mensagens -->
+                <div class="infos">
+                    <?php
+                    date_default_timezone_set('America/Sao_Paulo');
+                    if (isset($_GET['message'])) {
+                        $message = $_GET['message'];
+                        if ($message == 1) echo '<div class="hora"><h3>Entrada: </h3><span>' . date("d/m/y H:i:s") . '</span></div>';
+                        if ($message == 2) echo '<div class="hora"><h3>Saída: </h3><span>' . date("d/m/y H:i:s") . '</span></div>';
+                        if ($message == 3) echo "<script>alert('Houve um erro no banco de dados');</script>";
+                        if ($message == 4) echo "<script>alert('Usuário não encontrado, CPF ou Senha incorretos');</script>";
+                    }
+                    ?>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Reconhece o botão como input do form
+        // MÁSCARA DO CPF (VISUAL ENQUANTO DIGITA)
+        var cpfInput = document.getElementById("cpf");
+        cpfInput.addEventListener("input", function() {
+            var v = this.value;
+            
+            // Remove tudo o que não é dígito
+            v = v.replace(/\D/g, "");
+
+            // Coloca um ponto entre o terceiro e o quarto dígitos
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+
+            // Coloca um ponto entre o terceiro e o quarto dígitos de novo (para o segundo bloco)
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+
+            // Coloca um hífen entre o terceiro e o quarto dígitos
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+            this.value = v;
+        });
+
+        // ENVIO DO FORMULÁRIO (LIMPEZA DO CPF)
         document.getElementById("submitButton").addEventListener("click", function (event) {
-            // Impede o envio do formulário
+            // Impede o envio do formulário imediato
             event.preventDefault();
 
             // Exibe o popup de confirmação
             if (confirm("Deseja realmente bater o ponto?")) {
-                // Envia o formulário se o usuário confirmar
+                
+                // --- LIMPEZA DO CPF ANTES DE ENVIAR ---
+                var cpfField = document.getElementById("cpf");
+                // Remove pontos e traços, deixando apenas números
+                cpfField.value = cpfField.value.replace(/\D/g, "");
+
+                // Envia o formulário
                 document.getElementById("batepontoForm").submit();
             } else {
                 return; // Caso contrário, não faz nada
             }
-        });
-
-        // Adicionar evento de input ao campo de n�mero
-        var numberInput = document.getElementById("cpf");
-        numberInput.addEventListener("input", function() {
-            // Remove todos os caracteres n�o num�ricos
-            this.value = this.value.replace(/\D/g, "");
         });
     </script>
 </body>

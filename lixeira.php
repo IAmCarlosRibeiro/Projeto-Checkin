@@ -7,7 +7,7 @@
     
     <!-- Certifique-se de copiar o CSS novo para este arquivo ou usar o stylerelatorio.css -->
     <link rel="stylesheet" href="./styles/stylelixeira.css">
-    <link rel="shortcut icon" href="./styles/raposa.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="./styles/clock.ico" type="image/x-icon">
 
     <!-- FullCalendar CSS e JS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
@@ -77,7 +77,7 @@
                 $cpf = $_POST["cpf"];
                 $showResults = true;
 
-                // 1. CALENDÁRIO: Busca dados da tabela LIXEIRA
+                // 1. CALENDÁRIO: Busca dados da tabela Lixeira
                 // Nota: Alterado de 'pontos' para 'lixeira'
                 $sql = "SELECT u.nome, l.cpf, l.entrada, l.saida, 
                         strftime('%s', l.saida) - strftime('%s', l.entrada) AS duracao 
@@ -110,7 +110,7 @@
                     }
                 }
 
-                // 2. TABELA: Busca resumo da tabela LIXEIRA
+                // 2. TABELA: Busca resumo da tabela Lixeira
                 // Nota: Alterado de 'pontos' para 'lixeira'
                 $sqlHours = "SELECT u.nome, l.cpf, SUM(strftime('%s', l.saida) - strftime('%s', l.entrada)) AS duracao_total 
                              FROM lixeira AS l 

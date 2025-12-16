@@ -1,187 +1,210 @@
-/* stylerelatorio.css */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
+/*===== VARIABLES CSS =====*/
 :root {
-    --first-color: #1b9aaa;
-    --first-color-hover: #157a8a;
-    --second-color: #050505;
-    --bg-color: #f4f6f8;
-    --card-color: #ffffff;
-    --text-color: #333;
-    --border-color: #e0e0e0;
+  --first-color: #1b9aaa;
+  --first-color-hover: #157a8a;
+  --second-color: #050505;
+  --third-color: #dddbcb;
+  --text-color: #333;
+  --error-color: #d9534f;
 }
 
 * {
+    padding: 0;
+    margin: 0;
     box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0;
-    padding: 20px;
-}
-
-/* Container Principal */
-.main-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.header-section {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.header-section h1 {
-    font-size: 2.2rem;
-    color: var(--second-color);
-    margin-bottom: 0;
-}
-
-/* Card Genérico */
-.card {
-    background-color: var(--card-color);
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    border: 1px solid var(--border-color);
-}
-
-/* =========================================
-   RESTAURAÇÃO DO FORMULÁRIO ORIGINAL
-   ========================================= */
-
-.bodyform {
-    /* Centraliza o formulário dentro do card */
-    max-width: 500px; 
-    margin: 0 auto; 
-}
-
-form {
-    display: flex;
-    flex-direction: column;
     width: 100%;
-}
-
-label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    margin-top: 15px;
-    display: block;
-    color: var(--second-color);
-}
-
-input[type="date"] {
-    padding: 12px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    width: 100%;
-    font-size: 1.1em;
-    font-family: inherit;
-}
-
-/* Estilo do Input CPF Original */
-.input-box {
-    margin-top: 15px;
+    height: 100vh;
     display: flex;
-    flex-direction: column; /* Mantive column para garantir que label fique acima */
+    justify-content: center;
+    align-items: center;
+    background-color: var(--third-color);
 }
 
-.input-cpf {
-    padding: 0.8rem 1.2rem;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 1px 1px 6px #0000001c;
-    width: 100%;
-    font-size: 1rem;
+.container {
+    width: 80%;
+    height: 80vh;
+    display: flex;
+    box-shadow: 5px 5px 15px var(--first-color);
     background-color: #fff;
-    border: 1px solid transparent;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.input-cpf:hover {
-    background-color: #eeeeee75;
+/* --- LADO ESQUERDO (IMAGEM) --- */
+.form-image {
+    width: 50%;
+    height: 100%;
+    background-color: var(--second-color);
+    background-image: url('./painel.png'); /* Certifique-se que a imagem existe */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
-.input-cpf:focus-visible {
-    outline: none;
-    border: 1px solid var(--first-color);
+/* --- LADO DIREITO (FORMULÁRIO) --- */
+.form {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center; /* Centraliza verticalmente */
+    align-items: center;
+    flex-direction: column;
+    background-color: #fdfeff;
+    padding: 3rem;
+    overflow-y: auto; /* Caso a tela seja pequena verticalmente, cria scroll */
 }
 
-.input-cpf::placeholder {
-    color: #000000be;
+/* Header do Form */
+.form-header {
+    width: 100%;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: flex-start;
 }
 
-/* Botão Original */
-button[type="submit"] {
-    padding: 12px 20px;
+.form-header h1 {
+    font-size: 2.5rem;
+    color: var(--second-color);
+    position: relative;
+    padding-bottom: 10px;
+}
+
+/* Traço abaixo do título */
+.form-header h1::after {
+    content: '';
+    display: block;
+    width: 5rem;
+    height: 0.3rem;
     background-color: var(--first-color);
-    color: #fff;
+    margin-top: 5px;
+    position: absolute;
+    left: 0;
+}
+
+/* Inputs */
+.input-group {
+    width: 100%;
+}
+
+.input-box {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.input-box label {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 10px 0;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 25px;
-    width: 100%;
-    font-size: 1.2em;
+    border-bottom: 2px solid #9b9b9b;
+    outline: none;
+    font-size: 1rem;
+    color: var(--text-color);
+    background: transparent;
+    transition: border-color 0.3s;
+}
+
+.input-box input:focus {
+    border-bottom: 3px solid var(--first-color);
+}
+
+.input-box input::placeholder {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+/* Aviso de Caps Lock */
+#capsLockAlert {
+    font-size: 0.75rem;
+    color: var(--error-color);
+    margin-top: 5px;
     font-weight: bold;
-    transition: background 0.3s ease;
 }
 
-button[type="submit"]:hover {
-    background-color: var(--first-color-hover);
-}
-
-/* =========================================
-   ESTILOS DO CALENDÁRIO E TABELA
-   ========================================= */
-
-#calendar {
-    max-width: 100%;
-    margin: 0 auto;
-    font-family: 'Roboto', sans-serif;
-}
-
-/* FullCalendar Customizado */
-.fc-event {
-    background-color: var(--first-color);
-    border-color: var(--first-color);
-    cursor: pointer;
-}
-.fc-toolbar-title {
-    font-size: 1.5em !important;
-}
-.fc-button-primary {
-    background-color: var(--second-color) !important;
-    border-color: var(--second-color) !important;
-}
-
-/* Tabela */
-.table-container {
-    overflow-x: auto;
-}
-
-table {
+/* Botão Principal */
+.login-button {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 1rem;
 }
 
-table th, table td {
+#submitButton {
+    width: 100%;
     padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    border: none;
+    background-color: var(--second-color);
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
 }
 
-table th {
+#submitButton:hover {
     background-color: var(--first-color);
-    color: white;
-    font-weight: 500;
 }
 
-table tr:hover {
-    background-color: #f9f9f9;
+#submitButton a {
+    text-decoration: none;
+    color: inherit; /* Herda a cor branca do botão */
+    display: block; /* Ocupa todo o botão */
+}
+
+/* Link "Já tem conta?" */
+.login-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 1rem;
+    color: #666;
+}
+
+.login-link a {
+    text-decoration: none;
+    font-weight: bold;
+    color: var(--second-color);
+    transition: color 0.3s;
+}
+
+.login-link a:hover {
+    color: var(--first-color);
+    text-decoration: underline;
+}
+
+/* Mensagens de PHP */
+.infos {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Responsividade */
+@media screen and (max-width: 1064px) {
+    .container {
+        width: 90%;
+        height: auto;
+        flex-direction: column;
+    }
+    
+    .form-image {
+        display: none;
+    }
+
+    .form {
+        width: 100%;
+        padding: 2rem;
+    }
 }
