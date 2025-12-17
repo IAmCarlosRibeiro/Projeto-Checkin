@@ -1,0 +1,127 @@
+/* stylerecupera.css */
+
+/* --- 1. AJUSTE DE LARGURA DO FORMULÁRIO --- */
+/* Força o formulário a ter uma largura máxima e centraliza ele na tela */
+.form form {
+    max-width: 320px; /* Define um limite para não ficar esticado */
+    width: 100%;
+    margin: 0 auto;   /* Centraliza o bloco do formulário */
+}
+
+/* Garante que o container de resultado também respeite essa largura */
+.result-card {
+    max-width: 380px;
+    width: 100%;
+    margin: 20px auto;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* --- 2. CENTRALIZAÇÃO DO TÍTULO COM LINHA À ESQUERDA --- */
+.form-header {
+    display: flex;
+    justify-content: center !important; /* Centraliza o bloco do título na página */
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.title {
+    text-align: center; /* Garante que o texto fique centralizado */
+}
+
+.title h1 {
+    display: inline-block; /* O segredo: o bloco fica do tamanho do texto */
+    position: relative;    /* Para posicionar a linha */
+    text-align: left;      /* O texto dentro do bloco fica à esquerda */
+    margin: 0;
+}
+
+/* A linha azul */
+.title h1::after {
+    content: '';
+    display: block;
+    width: 5rem;
+    height: 0.3rem;
+    background-color: var(--first-color);
+    margin-top: 5px;
+    
+    /* Força a linha a ficar na esquerda do texto (que agora está centralizado na tela) */
+    position: absolute;
+    left: 0 !important; 
+    transform: none !important; /* Remove qualquer centralização anterior */
+}
+
+/* --- ESTILOS GERAIS DA PÁGINA --- */
+.btn-whatsapp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #25D366;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 50px;
+    transition: background 0.3s, transform 0.2s;
+    font-family: 'Roboto', sans-serif;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(37, 211, 102, 0.2);
+    margin-top: 15px;
+}
+
+.btn-whatsapp:hover {
+    background-color: #1ebe57;
+    transform: translateY(-2px);
+}
+
+.btn-whatsapp svg {
+    margin-right: 10px;
+    fill: white;
+}
+
+.back-link {
+    display: block;
+    margin-top: 25px;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    color: #1b9aaa;
+    text-decoration: underline;
+}
+
+.error-msg {
+    color: #e74c3c;
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.instruction-text {
+    text-align: center;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+/* Result Styles */
+.result-name {
+    color: #1b9aaa;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.result-text {
+    color: #555;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}

@@ -36,7 +36,7 @@ session_start();
                         <label for="password" class="form__label">Senha</label>
                     </div>
                     <div class="forgot-pass">
-                        <a href="#">Esqueci a senha</a>
+                        <a href="recupera.php">Esqueci a senha</a>
                     </div>
                 </div>
 
