@@ -1,88 +1,71 @@
 <?php
-// Definir o fuso horário para Brasília
+session_start();
 date_default_timezone_set('America/Sao_Paulo');
 
-// Verificar se o formulário foi enviado
+$dbPath = "./DB/db_pontos.db";
+$db = new SQLite3($dbPath);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Dados de conexão com o banco de dados SQLite3
-    $dbPath = "./DB/db_pontos.db";
-
-    // Dados do formulário
-    $cpf = $_POST["cpf"];
+    
+    $cpf = preg_replace('/\D/', '', $_POST["cpf"]); 
     $password = $_POST["password"];
-    $entrada = date("Y-m-d H:i:s"); // Obtém a data e hora atual
 
-    // Conectar ao banco de dados SQLite3
-    $db = new SQLite3($dbPath);
+    $stmt = $db->prepare("SELECT * FROM usuarios WHERE cpf = :cpf");
+    $stmt->bindValue(':cpf', $cpf);
+    $result = $stmt->execute();
+    $user = $result->fetchArray(SQLITE3_ASSOC);
 
-    // Verificar se a conexão foi estabelecida com sucesso
-    if (!$db) {
-        die("Erro ao conectar ao banco de dados.");
-    }
+    // Verifica usuário e senha
+    if ($user && password_verify($password, $user['senha'])) {
 
-    // Consulta SQL para verificar os dados do usuário e se ele é um administrador
-    $sql = "SELECT cpf, senha, admin FROM usuarios WHERE cpf = '$cpf' AND senha = '$password'";
+        $checkTemp = $db->querySingle("SELECT COUNT(*) FROM temp WHERE cpf = '$cpf'");
 
-    // Executar a consulta SQL
-    $result = $db->query($sql);
+        if ($checkTemp > 0) {
+            // SAÍDA
+            $rowTemp = $db->querySingle("SELECT entrada FROM temp WHERE cpf = '$cpf'", true);
+            $entrada = $rowTemp['entrada'];
+            $saida = date("Y-m-d H:i:s");
 
-    // Verificar se a consulta retornou algum resultado
-    if ($result && $row = $result->fetchArray()) {
-        // Verificar se o usuário é um administrador
-        $isAdmin = $row['admin'];
+            $stmtInsert = $db->prepare("INSERT INTO pontos (cpf, entrada, saida) VALUES (:cpf, :entrada, :saida)");
+            $stmtInsert->bindValue(':cpf', $cpf);
+            $stmtInsert->bindValue(':entrada', $entrada);
+            $stmtInsert->bindValue(':saida', $saida);
 
-        if ($isAdmin) {
-            // Redirecionar para a página de relatórios para administradores
-            header('Location: relatorios.php');
-            exit();
-        }
-    }
-
-    // Consulta SQL para verificar os dados do usuário
-    $sql = "SELECT cpf, senha FROM usuarios WHERE cpf = '$cpf' AND senha = '$password'";
-
-    // Executar a consulta SQL
-    $result = $db->query($sql);
-
-    // Verificar se a consulta retornou algum resultado
-    if ($result && $result->fetchArray()) {
-        //echo "Existe no banco de dados!";
-        $sql = "SELECT cpf, entrada FROM temp WHERE cpf = '$cpf'"; // Verifica se usuario já deu entrada
-        $result = $db->query($sql);
-        if ($result && $row = $result->fetchArray()) {
-            $cpf = $row['cpf'];
-            $entrada = $row['entrada'];
-            $saida = date("Y-m-d H:i:s"); // Obtém a data e hora atual
-            $sql = "INSERT INTO pontos (cpf, entrada, saida) VALUES ('$cpf', '$entrada', '$saida')";
-            if ($db->exec($sql)) {
-                //echo "Registro inserido com sucesso!";
-                $sql = "DELETE FROM temp WHERE cpf = '$cpf'";
-                if ($db->exec($sql)) {
-                    //echo "Registro removido da tabela 'temp'!";
-                    header("Location:index.php?message=2"); //Faz o usuário retorna a mesma página MUDAR PARA HEADER
-                } else {
-                    //echo "Erro ao remover registro da tabela 'temp'."; message == 3
-                    header("Location:index.php?message=3");
-                }
+            if ($stmtInsert->execute()) {
+                $db->exec("DELETE FROM temp WHERE cpf = '$cpf'");
+                // NOME DA VARIÁVEL: msg_index
+                $_SESSION['msg_index'] = "Saída registrada: " . date("d/m/y H:i:s");
+                $_SESSION['type_index'] = "success"; 
             } else {
-                //echo "Erro ao inserir registro na tabela 'pontos'."; // message == 3
-                header("Location:index.php?message=3");
+                $_SESSION['msg_index'] = "Erro ao salvar saída.";
+                $_SESSION['type_index'] = "error";
             }
+
         } else {
-            $sql = "INSERT INTO temp (cpf, entrada) VALUES ('$cpf', '$entrada')";
-            if ($db->exec($sql)) {
-                //echo "Registro inserido com sucesso na tabela 'temp'!";
-                header("Location:index.php?message=1");
+            // ENTRADA
+            $entrada = date("Y-m-d H:i:s");
+            $stmtTemp = $db->prepare("INSERT INTO temp (cpf, entrada) VALUES (:cpf, :entrada)");
+            $stmtTemp->bindValue(':cpf', $cpf);
+            $stmtTemp->bindValue(':entrada', $entrada);
+
+            if ($stmtTemp->execute()) {
+                // NOME DA VARIÁVEL: msg_index
+                $_SESSION['msg_index'] = "Entrada registrada: " . date("d/m/y H:i:s");
+                $_SESSION['type_index'] = "success";
             } else {
-                //echo "Erro ao inserir registro na tabela 'temp'."; // message == 3
-                header("Location:index.php?message=3");
+                $_SESSION['msg_index'] = "Erro ao salvar entrada.";
+                $_SESSION['type_index'] = "error";
             }
         }
+
     } else {
-       header("Location:index.php?message=4");
+        // NOME DA VARIÁVEL: msg_index
+        $_SESSION['msg_index'] = "CPF ou Senha incorretos.";
+        $_SESSION['type_index'] = "error";
     }
 
-    // Fechar a conexão com o banco de dados
-    $db->close();
+    header("Location: index.php");
+    exit;
 }
+$db->close();
 ?>
