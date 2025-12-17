@@ -1,2 +1,3 @@
 teste.php
-DB/
+# Ignorar o banco de dados "oficial" de trabalho
+DB/db_pontos.db
