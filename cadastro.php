@@ -5,7 +5,6 @@ session_start();
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="./styles/stylecadastro.css">
     <link rel="shortcut icon" href="./styles/clock.ico" type="image/x-icon">
@@ -24,6 +23,12 @@ session_start();
                     <div class="input-box">
                         <label for="name">Nome Completo</label>
                         <input id="name" type="text" name="name" placeholder="Nome completo" required>
+                    </div>
+
+                    <!-- NOVO CAMPO EMAIL -->
+                    <div class="input-box">
+                        <label for="email">E-mail</label>
+                        <input id="email" type="email" name="email" placeholder="seu@email.com" required>
                     </div>
 
                     <div class="input-box">
@@ -51,7 +56,6 @@ session_start();
                         <a href="index.php">Entrar</a>
                     </div>
 
-                    <!-- ÁREA DE MENSAGENS -->
                     <div class="infos">
                         <?php if (isset($_SESSION['msg_cadastro'])): ?>
                             <div style="padding: 10px; margin-top: 15px; border-radius: 5px; color: #fff; font-weight: bold; background-color: <?php echo ($_SESSION['type_cadastro'] == 'success') ? '#27ae60' : '#e74c3c'; ?>;">
@@ -69,12 +73,11 @@ session_start();
     </div>
 
     <script>
-        // Funções de Validação e Formatação (Mantidas iguais ao anterior)
+        // Validação de CPF
         function validaCPF(cpf) {
             cpf = cpf.replace(/[^\d]+/g, '');
             if (cpf == '') return false;
-            if (cpf.length != 11 || cpf == "00000000000" || cpf == "11111111111") return false; 
-            // (Adicione aqui o restante da validação de dígitos igual ao anterior para não ocupar espaço)
+            if (cpf.length != 11 || /^(\d)\1{10}$/.test(cpf)) return false;
             var add = 0; for (var i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
             var rev = 11 - (add % 11); if (rev == 10 || rev == 11) rev = 0; if (rev != parseInt(cpf.charAt(9))) return false;
             add = 0; for (var i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
@@ -82,17 +85,38 @@ session_start();
             return true;
         }
 
+        // Validação de Nome Completo
+        function validaNome(nome) {
+            return nome.trim().indexOf(' ') !== -1;
+        }
+
         document.getElementById("submitButton").addEventListener("click", function(event) {
             event.preventDefault();
+            var nameField = document.getElementById("name");
             var cpfField = document.getElementById("number");
-            var cpfValue = cpfField.value;
-            // (Validações de campos vazios e senhas aqui...)
-            if (!validaCPF(cpfValue)) { alert("CPF Inválido!"); return; }
-            
-            cpfField.value = cpfValue.replace(/\D/g, "");
+            var emailField = document.getElementById("email");
+            var passField = document.getElementById("password");
+            var confirmField = document.getElementById("Confirmpassword");
+
+            if (nameField.value === "" || emailField.value === "" || cpfField.value === "" || passField.value === "" || confirmField.value === "") {
+                alert("Por favor, preencha todos os campos."); return;
+            }
+
+            if (!validaNome(nameField.value)) {
+                alert("Por favor, digite seu Nome e Sobrenome comletos.");
+                nameField.focus();
+                return;
+            }
+
+            if (!validaCPF(cpfField.value)) {
+                alert("CPF Inválido!"); cpfField.focus(); return;
+            }
+
+            cpfField.value = cpfField.value.replace(/\D/g, "");
             document.getElementById("cadastroForm").submit();
         });
 
+        // Máscaras e Formatações
         var numberInput = document.getElementById("number");
         numberInput.addEventListener("input", function() {
             var v = this.value.replace(/\D/g, "");

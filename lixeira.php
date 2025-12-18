@@ -1,181 +1,230 @@
+<?php
+session_start();
+
+// --- VERIFICAÇÃO DE PERMISSÃO ---
+$isAdmin = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
+$isMod = isset($_SESSION['logged_in2']) && $_SESSION['logged_in2'] === true;
+
+if (!$isAdmin && !$isMod) {
+    header("Location: login.php");
+    exit;
+}
+
+$dbPath = "./DB/db_pontos.db";
+$db = new SQLite3($dbPath);
+date_default_timezone_set('America/Sao_Paulo');
+
+// Variáveis
+$calendarEvents = [];
+$summaryData = [];
+$showResults = false;
+
+// Formatação
+function formatarDuracao($duracao) {
+    $horas = floor($duracao / 3600);
+    $minutos = floor(($duracao / 60) % 60);
+    $segundos = $duracao % 60;
+    return sprintf("%02d:%02d:%02d", $horas, $minutos, $segundos);
+}
+
+// --- PROCESSAMENTO DO FORMULÁRIO ---
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (!empty($_POST["start_date"]) && !empty($_POST["end_date"])) {
+        $startDate = $_POST["start_date"];
+        $endDate = $_POST["end_date"];
+        $cpf = preg_replace('/\D/', '', $_POST["cpf"]);
+        $showResults = true;
+
+        // 1. DADOS PARA O CALENDÁRIO
+        $sql = "SELECT u.nome, l.cpf, l.entrada, l.saida, 
+                strftime('%s', l.saida) - strftime('%s', l.entrada) AS duracao 
+                FROM lixeira AS l 
+                INNER JOIN usuarios AS u ON l.cpf = u.cpf 
+                WHERE (date(l.entrada) >= :start_date AND date(l.entrada) <= :end_date)";
+        
+        if (!empty($cpf)) $sql .= " AND l.cpf = :cpf";
+
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':start_date', $startDate);
+        $stmt->bindValue(':end_date', $endDate);
+        if (!empty($cpf)) $stmt->bindValue(':cpf', $cpf);
+
+        $result = $stmt->execute();
+        while ($row = $result->fetchArray()) {
+            $titulo = $row['nome'] . " (" . formatarDuracao($row['duracao']) . ")";
+            $calendarEvents[] = [
+                'title' => $titulo,
+                'start' => $row['entrada'],
+                'end'   => $row['saida'],
+                'color' => '#c0392b', // Vermelho Lixeira
+                'extendedProps' => ['cpf' => $row['cpf']]
+            ];
+        }
+
+        // 2. DADOS PARA A TABELA (RESUMO)
+        $sqlHours = "SELECT u.nome, l.cpf, SUM(strftime('%s', l.saida) - strftime('%s', l.entrada)) AS duracao_total 
+                     FROM lixeira AS l 
+                     INNER JOIN usuarios AS u ON l.cpf = u.cpf 
+                     WHERE (date(l.entrada) >= :start_date AND date(l.entrada) <= :end_date)";
+
+        if (empty($cpf)) $sqlHours .= " GROUP BY l.cpf";
+        else $sqlHours .= " AND l.cpf = :cpf";
+
+        $stmtHours = $db->prepare($sqlHours);
+        $stmtHours->bindValue(':start_date', $startDate);
+        $stmtHours->bindValue(':end_date', $endDate);
+        if (!empty($cpf)) $stmtHours->bindValue(':cpf', $cpf);
+
+        $resultHours = $stmtHours->execute();
+        while ($rowH = $resultHours->fetchArray()) {
+            $summaryData[] = $rowH;
+        }
+    } else {
+        echo "<script>alert('Selecione o período.');</script>";
+    }
+}
+$db->close();
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lixeira</title>
+    <title>Lixeira de Pontos</title>
     
-    <!-- Certifique-se de copiar o CSS novo para este arquivo ou usar o stylerelatorio.css -->
-    <link rel="stylesheet" href="./styles/stylelixeira.css">
+    <link rel="stylesheet" href="./styles/styleadm.css">
     <link rel="shortcut icon" href="./styles/clock.ico" type="image/x-icon">
 
-    <!-- FullCalendar CSS e JS -->
+    <!-- FullCalendar -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    
+    <style>
+        /* CSS Específico para garantir o layout do formulário */
+        .filter-form { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            align-items: end; 
+        }
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { font-weight: bold; margin-bottom: 5px; color: #555; }
+        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; }
+        
+        .btn-filter { 
+            background: #c0392b; 
+            color: #fff; 
+            border: none; 
+            padding: 10px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            height: 38px; 
+            width: 100%; 
+        }
+        .btn-filter:hover { background: #a93226; }
+
+        /* Ajuste do Título dentro do Summary */
+        .card summary h2 { margin: 0; font-size: 1.4rem; color: #c0392b; }
+        .card summary { display: flex; justify-content: space-between; align-items: center; }
+    </style>
 </head>
 
 <body>
     <div class="main-container">
         
+        <!-- HEADER -->
         <div class="header-section">
-            <h1>Lixeira</h1>
+            <div>
+                <h1 style="color:#c0392b">🗑️ Lixeira</h1>
+                <span style="color: #666; font-size: 0.9rem;">Histórico de pontos excluídos/cancelados</span>
+            </div>
+            
+            <div class="header-actions">
+                <?php if ($isAdmin): ?>
+                    <a href="adm.php" class="btn-logout" style="background:#1b9aaa; color:white; border:none;">← Voltar ao Dashboard</a>
+                <?php else: ?>
+                    <a href="login.php" class="btn-logout">Sair</a>
+                <?php endif; ?>
+            </div>
         </div>
 
-        <!-- Card do Formulário -->
+        <!-- CARD DE FILTRO -->
         <div class="card">
-            <div class="bodyform">
-                <form method="POST" action="">
-                    <label for="start_date">Data de início:</label>
-                    <input type="date" id="start_date" name="start_date" required value="<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : ''; ?>">
-
-                    <label for="end_date">Data de término:</label>
-                    <input type="date" id="end_date" name="end_date" required value="<?php echo isset($_POST['end_date']) ? $_POST['end_date'] : ''; ?>">
-
-                    <div class="input-box">
-                        <label for="cpf" class="input-cpf-label">CPF:</label>
-                        <input id="cpf" class="input-cpf" type="text" name="cpf" placeholder="CPF" value="<?php echo isset($_POST['cpf']) ? $_POST['cpf'] : ''; ?>">
+            <div class="card-content" style="border:none; padding-top:20px;">
+                <!-- Classe filter-form restaurada -->
+                <form method="POST" action="" class="filter-form">
+                    <div class="input-group">
+                        <label>Data Início:</label>
+                        <input type="date" name="start_date" required value="<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : ''; ?>">
                     </div>
 
-                    <button type="submit">Gerar Lista</button>
+                    <div class="input-group">
+                        <label>Data Término:</label>
+                        <input type="date" name="end_date" required value="<?php echo isset($_POST['end_date']) ? $_POST['end_date'] : ''; ?>">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Filtrar CPF (Opcional):</label>
+                        <input id="cpf" type="text" name="cpf" placeholder="000.000.000-00" maxlength="14" value="<?php echo isset($_POST['cpf']) ? $_POST['cpf'] : ''; ?>">
+                    </div>
+
+                    <div class="input-group">
+                        <button type="submit" class="btn-filter">🔍 Buscar Registros</button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <?php
-        session_start();
-
-        // Verificar se o usuário está autenticado
-        if (!isset($_SESSION['logged_in2']) || $_SESSION['logged_in2'] !== true) {
-            header("Location: loginl.php");
-            exit;
-        }
-
-        // Variáveis do sistema
-        $calendarEvents = [];
-        $summaryData = [];
-        $showResults = false;
-
-        // Conexão DB
-        $dbPath = "./DB/db_pontos.db";
-        $db = new SQLite3($dbPath);
-
-        if (!$db) {
-            echo "<script>alert('Erro ao conectar ao banco de dados.');</script>";
-        }
-
-        // Função de formatação
-        function formatarDuracao($duracao) {
-            $horas = floor($duracao / 3600);
-            $minutos = floor(($duracao / 60) % 60);
-            $segundos = $duracao % 60;
-            return sprintf("%02d:%02d:%02d", $horas, $minutos, $segundos);
-        }
-
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if (!empty($_POST["start_date"]) && !empty($_POST["end_date"])) {
-                $startDate = $_POST["start_date"];
-                $endDate = $_POST["end_date"];
-                $cpf = $_POST["cpf"];
-                $showResults = true;
-
-                // 1. CALENDÁRIO: Busca dados da tabela Lixeira
-                // Nota: Alterado de 'pontos' para 'lixeira'
-                $sql = "SELECT u.nome, l.cpf, l.entrada, l.saida, 
-                        strftime('%s', l.saida) - strftime('%s', l.entrada) AS duracao 
-                        FROM lixeira AS l 
-                        INNER JOIN usuarios AS u ON l.cpf = u.cpf 
-                        WHERE (date(l.entrada) >= :start_date AND date(l.entrada) <= :end_date)";
-                
-                if (!empty($cpf)) {
-                    $sql .= " AND l.cpf = :cpf";
-                }
-
-                $stmt = $db->prepare($sql);
-                if ($stmt) {
-                    $stmt->bindValue(':start_date', $startDate);
-                    $stmt->bindValue(':end_date', $endDate);
-                    if (!empty($cpf)) $stmt->bindValue(':cpf', $cpf);
-
-                    $result = $stmt->execute();
-                    while ($row = $result->fetchArray()) {
-                        $titulo = $row['nome'] . " (" . formatarDuracao($row['duracao']) . ")";
-                        $calendarEvents[] = [
-                            'title' => $titulo,
-                            'start' => $row['entrada'],
-                            'end'   => $row['saida'],
-                            'color' => '#d9534f', // Cor vermelha para indicar lixeira/excluídos
-                            'extendedProps' => [
-                                'cpf' => $row['cpf']
-                            ]
-                        ];
-                    }
-                }
-
-                // 2. TABELA: Busca resumo da tabela Lixeira
-                // Nota: Alterado de 'pontos' para 'lixeira'
-                $sqlHours = "SELECT u.nome, l.cpf, SUM(strftime('%s', l.saida) - strftime('%s', l.entrada)) AS duracao_total 
-                             FROM lixeira AS l 
-                             INNER JOIN usuarios AS u ON l.cpf = u.cpf 
-                             WHERE (date(l.entrada) >= :start_date AND date(l.entrada) <= :end_date)";
-
-                if (empty($cpf)) {
-                    $sqlHours .= " GROUP BY l.cpf";
-                } else {
-                    $sqlHours .= " AND l.cpf = :cpf";
-                }
-
-                $stmtHours = $db->prepare($sqlHours);
-                if ($stmtHours) {
-                    $stmtHours->bindValue(':start_date', $startDate);
-                    $stmtHours->bindValue(':end_date', $endDate);
-                    if (!empty($cpf)) $stmtHours->bindValue(':cpf', $cpf);
-
-                    $resultHours = $stmtHours->execute();
-                    while ($rowH = $resultHours->fetchArray()) {
-                        $summaryData[] = $rowH;
-                    }
-                }
-            } else {
-                echo "<script>alert('Por favor, selecione um intervalo de tempo.');</script>";
-            }
-        }
-        $db->close();
-        ?>
-
         <?php if ($showResults): ?>
             
-            <!-- Calendário -->
-            <div class="card">
-                <h2 style="margin-bottom: 20px;">📅 Visão Mensal (Itens Excluídos)</h2>
-                <div id='calendar'></div>
-            </div>
-
-            <!-- Tabela de Resumo -->
-            <?php if (count($summaryData) > 0): ?>
-            <div class="card">
-                <h2 style="margin-bottom: 20px;">⏱️ Resumo de Horas na Lixeira</h2>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>CPF</th>
-                                <th>Total de Horas</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($summaryData as $data): ?>
-                                <tr>
-                                    <td><?php echo $data['nome']; ?></td>
-                                    <td><?php echo $data['cpf']; ?></td>
-                                    <td><strong><?php echo formatarDuracao($data['duracao_total']); ?></strong></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            <!-- CALENDÁRIO (RETRÁTIL) -->
+            <details class="card" style="border-top-color: #c0392b;" open id="detailsCalendar">
+                <summary>
+                    <h2>📅 Visão Mensal (Excluídos)</h2>
+                    <div class="toggle-icon"></div>
+                </summary>
+                <div class="card-content">
+                    <div id='calendar'></div>
                 </div>
-            </div>
+            </details>
+
+            <!-- TABELA DE RESUMO (RETRÁTIL) -->
+            <?php if (count($summaryData) > 0): ?>
+            <details class="card" open>
+                <summary>
+                    <h2>⏱️ Resumo de Horas Excluídas</h2>
+                    <div class="toggle-icon"></div>
+                </summary>
+                <div class="card-content">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr style="background:#c0392b; color:white;">
+                                    <th style="background:#c0392b; color:white;">Nome</th>
+                                    <th style="background:#c0392b; color:white;">CPF</th>
+                                    <th style="background:#c0392b; color:white;">Total de Horas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($summaryData as $data): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($data['nome']); ?></td>
+                                        <td><?php echo htmlspecialchars($data['cpf']); ?></td>
+                                        <td><strong><?php echo formatarDuracao($data['duracao_total']); ?></strong></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </details>
             <?php else: ?>
-                <script>alert('Nenhum registro encontrado na lixeira para este período.');</script>
+                <div class="card">
+                    <div class="card-content" style="padding:20px; text-align:center; color:#666;">
+                        Nenhum registro encontrado na lixeira para este período.
+                    </div>
+                </div>
             <?php endif; ?>
 
         <?php endif; ?>
@@ -183,69 +232,53 @@
     </div>
 
     <script>
-        // Formatar campo CPF apenas números
+        // Máscara CPF
         var numberInput = document.getElementById("cpf");
         if(numberInput){
             numberInput.addEventListener("input", function () {
-                this.value = this.value.replace(/\D/g, "");
+                var v = this.value.replace(/\D/g, "");
+                v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                this.value = v;
             });
         }
 
-        // Inicializar Calendário
+        // Calendário
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
-            
+            var detailsEl = document.getElementById('detailsCalendar');
+
             if (calendarEl) {
                 var eventsData = <?php echo json_encode($calendarEvents); ?>;
-
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
                     locale: 'pt-br',
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,listWeek'
-                    },
-                    buttonText: {
-                        today:    'Hoje',
-                        month:    'Mês',
-                        week:     'Semana',
-                        day:      'Dia',
-                        list:     'Lista'
-                    },
+                    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listWeek' },
+                    buttonText: { today: 'Hoje', month: 'Mês', week: 'Semana', list: 'Lista' },
                     events: eventsData,
                     height: 'auto',
-
-                    // Evento de clique detalhado
                     eventClick: function(info) {
                         info.jsEvent.preventDefault();
-
-                        var cpfFuncionario = info.event.extendedProps.cpf ? info.event.extendedProps.cpf : 'Não informado';
-                        var nomeFuncionario = info.event.title.split(' (')[0];
-
-                        var options = { 
-                            day: '2-digit', month: '2-digit', year: 'numeric', 
-                            hour: '2-digit', minute: '2-digit', second: '2-digit' 
-                        };
-
-                        var entrada = info.event.start ? info.event.start.toLocaleString('pt-BR', options) : 'Erro';
-                        var saida = info.event.end ? info.event.end.toLocaleString('pt-BR', options) : 'Em andamento';
-
-                        alert(
-                            'Registro de Lixeira\n\n' +
-                            'Funcionário: ' + nomeFuncionario + 
-                            '\nCPF: ' + cpfFuncionario + 
-                            '\nEntrada: ' + entrada + 
-                            '\nSaída: ' + saida
-                        );
+                        var nome = info.event.title.split(' (')[0];
+                        var entrada = info.event.start.toLocaleString();
+                        var saida = info.event.end ? info.event.end.toLocaleString() : '?';
+                        alert('REGISTRO EXCLUÍDO\n\nFuncionário: ' + nome + '\nEntrada: ' + entrada + '\nSaída: ' + saida);
                     }
                 });
                 
-                if (eventsData.length > 0) {
-                    calendar.gotoDate(eventsData[0].start);
-                }
-
+                if (eventsData.length > 0) calendar.gotoDate(eventsData[0].start);
+                
                 calendar.render();
+
+                // FIX: Redesenhar calendário ao abrir a aba
+                if(detailsEl) {
+                    detailsEl.addEventListener("toggle", function() {
+                        if (this.open) {
+                            setTimeout(function(){ calendar.updateSize(); }, 50);
+                        }
+                    });
+                }
             }
         });
     </script>
