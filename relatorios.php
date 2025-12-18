@@ -90,7 +90,7 @@ $db->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatórios</title>
     
-    <link rel="stylesheet" href="./styles/styleadm.css">
+    <link rel="stylesheet" href="./styles/stylerelatorio.css">
     <link rel="shortcut icon" href="./styles/clock.ico" type="image/x-icon">
 
     <!-- FullCalendar -->

@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     elseif (isset($_POST['gerar_token'])) {
         $cpf = $_POST['reset_id'];
         $token = rand(100000, 999999);
-        $stmt = $db->prepare("UPDATE usuarios SET token_recuperacao = :token, token_expiracao = datetime('now', '+60 minutes') WHERE cpf = :cpf");
+        $stmt = $db->prepare("UPDATE usuarios SET token_recuperacao = :token, token_expiracao = datetime('now', '+30 minutes') WHERE cpf = :cpf");
         $stmt->bindValue(':token', $token);
         $stmt->bindValue(':cpf', $cpf);
         if ($stmt->execute()) {
@@ -150,7 +150,8 @@ $db->close();
             </div>
             <div class="header-actions">
                 <a href="lixeira.php" class="btn-trash" target="_blank">🗑️ Acessar Lixeira</a>
-                <a href="login.php" class="btn-logout">Sair</a>
+                <!-- LINK ATUALIZADO PARA LOGOUT.PHP -->
+                <a href="logout.php" class="btn-logout">Sair</a>
             </div>
         </div>
 
@@ -167,7 +168,7 @@ $db->close();
             <div class="stat-card green"><div class="stat-info"><h3><?php echo $countPontosHoje; ?></h3><p>Pontos Hoje</p></div><div class="stat-icon">✅</div></div>
         </div>
 
-        <!-- ABA 1: FUNCIONÁRIOS EM TURNO (Primeira Posição) -->
+        <!-- ABA 1: FUNCIONÁRIOS EM TURNO -->
         <details class="card" style="border-top-color: #e67e22;" <?php if(count($registrosTemp) > 0 || $search_temp) echo 'open'; ?>>
             <summary>
                 <div class="summary-content">
@@ -176,7 +177,6 @@ $db->close();
                     <!-- Barra de Pesquisa -->
                     <form method="GET" class="search-form" onclick="stopProp(event)">
                         <input type="text" name="q_temp" class="search-input" placeholder="Pesquisar CPF..." value="<?php echo htmlspecialchars($search_temp); ?>">
-                        <!-- Mantém a busca da outra aba -->
                         <?php if($search_users): ?><input type="hidden" name="q_users" value="<?php echo $search_users; ?>"><?php endif; ?>
                     </form>
                 </div>
@@ -209,7 +209,7 @@ $db->close();
             </div>
         </details>
 
-        <!-- ABA 2: GERENCIAR USUÁRIOS (Segunda Posição) -->
+        <!-- ABA 2: GERENCIAR USUÁRIOS -->
         <details class="card" <?php if(!$search_temp) echo 'open'; ?>>
             <summary>
                 <div class="summary-content">
@@ -218,7 +218,6 @@ $db->close();
                     <!-- Barra de Pesquisa -->
                     <form method="GET" class="search-form" onclick="stopProp(event)">
                         <input type="text" name="q_users" class="search-input" placeholder="Nome, CPF ou Email..." value="<?php echo htmlspecialchars($search_users); ?>">
-                        <!-- Mantém a busca da outra aba -->
                         <?php if($search_temp): ?><input type="hidden" name="q_temp" value="<?php echo $search_temp; ?>"><?php endif; ?>
                     </form>
                 </div>
@@ -282,7 +281,7 @@ $db->close();
                                     <?php if($isSoliciting): ?>
                                         <form method="post" style="display:inline-block;" onsubmit="return confirm('Gerar Token?');">
                                             <input type="hidden" name="reset_id" value="<?php echo $reg['cpf']; ?>">
-                                            <button class="btn-manage" style="background:#d35400" type="submit" name="gerar_token">🔑 Gerar Token</button>
+                                            <button class="btn-manage" style="background:#d35400" type="submit" name="gerar_token">🔑 Token</button>
                                         </form>
                                     <?php endif; ?>
 
@@ -337,6 +336,7 @@ $db->close();
                         <option value="ativo">✅ Ativo</option>
                         <option value="ferias">🏖️ Férias</option>
                         <option value="desligado">🚫 Desligado</option>
+                        <option value="solicitando">❗ Solicitando Senha</option>
                     </select>
                 </div>
 

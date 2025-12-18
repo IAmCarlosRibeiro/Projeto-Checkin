@@ -314,3 +314,29 @@ textarea.input-sql:focus { outline: none; border-color: var(--first-color); }
     /* Filtros no mobile */
     .filter-form { grid-template-columns: 1fr; }
 }
+
+/* --- Botão Voltar ao Dashboard --- */
+.btn-back {
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-flex; /* Garante que fique alinhado com os outros */
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease-in-out;
+    height: 40px;
+    cursor: pointer;
+
+    /* Estilo Visual (Azul Principal) */
+    background-color: var(--first-color); 
+    color: white;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-back:hover {
+    background-color: #157a8a; /* Tom mais escuro no hover */
+    transform: translateY(-1px);
+}

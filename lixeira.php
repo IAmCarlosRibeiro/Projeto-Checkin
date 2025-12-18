@@ -2,6 +2,7 @@
 session_start();
 
 // --- VERIFICAÇÃO DE PERMISSÃO ---
+// Aceita se for ADMIN (logged_in) OU MODERADOR (logged_in2)
 $isAdmin = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 $isMod = isset($_SESSION['logged_in2']) && $_SESSION['logged_in2'] === true;
 
@@ -91,42 +92,26 @@ $db->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lixeira de Pontos</title>
+    <title>Lixeira</title>
     
-    <link rel="stylesheet" href="./styles/styleadm.css">
+    <!-- CSS da Dashboard -->
+    <link rel="stylesheet" href="./styles/stylerelatorio.css">
     <link rel="shortcut icon" href="./styles/clock.ico" type="image/x-icon">
 
     <!-- FullCalendar -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     
     <style>
-        /* CSS Específico para garantir o layout do formulário */
-        .filter-form { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 15px; 
-            align-items: end; 
-        }
-        .input-group { display: flex; flex-direction: column; }
-        .input-group label { font-weight: bold; margin-bottom: 5px; color: #555; }
-        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; }
-        
-        .btn-filter { 
-            background: #c0392b; 
-            color: #fff; 
-            border: none; 
-            padding: 10px; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            height: 38px; 
-            width: 100%; 
-        }
-        .btn-filter:hover { background: #a93226; }
-
-        /* Ajuste do Título dentro do Summary */
+        /* Título específico da Lixeira */
         .card summary h2 { margin: 0; font-size: 1.4rem; color: #c0392b; }
-        .card summary { display: flex; justify-content: space-between; align-items: center; }
+        .summary-content { display: flex; align-items: center; width: 100%; }
+        
+        /* Botão de busca vermelho */
+        .btn-filter-trash { 
+            background: #c0392b; color: #fff; border: none; padding: 10px; border-radius: 5px; 
+            cursor: pointer; font-weight: bold; height: 42px; width: 100%; transition: background 0.3s;
+        }
+        .btn-filter-trash:hover { background: #a93226; }
     </style>
 </head>
 
@@ -135,24 +120,25 @@ $db->close();
         
         <!-- HEADER -->
         <div class="header-section">
-            <div>
-                <h1 style="color:#c0392b">🗑️ Lixeira</h1>
-                <span style="color: #666; font-size: 0.9rem;">Histórico de pontos excluídos/cancelados</span>
+            <div class="header-title">
+                <h1 style="color: #c0392b;">🗑️ Lixeira</h1>
+                <span style="color: #666; font-size: 0.9rem;">Histórico de pontos excluídos</span>
             </div>
             
             <div class="header-actions">
                 <?php if ($isAdmin): ?>
-                    <a href="adm.php" class="btn-logout" style="background:#1b9aaa; color:white; border:none;">← Voltar ao Dashboard</a>
-                <?php else: ?>
-                    <a href="login.php" class="btn-logout">Sair</a>
+                    <!-- Botão Voltar (Apenas para Admin) -->
+                    <a href="adm.php" class="btn-back">← Dashboard</a>
                 <?php endif; ?>
+                
+                <!-- Botão Sair (Para todos) -->
+                <a href="logout.php" class="btn-logout">Sair</a>
             </div>
         </div>
 
         <!-- CARD DE FILTRO -->
         <div class="card">
             <div class="card-content" style="border:none; padding-top:20px;">
-                <!-- Classe filter-form restaurada -->
                 <form method="POST" action="" class="filter-form">
                     <div class="input-group">
                         <label>Data Início:</label>
@@ -170,7 +156,7 @@ $db->close();
                     </div>
 
                     <div class="input-group">
-                        <button type="submit" class="btn-filter">🔍 Buscar Registros</button>
+                        <button type="submit" class="btn-filter-trash">🔍 Buscar Registros</button>
                     </div>
                 </form>
             </div>
@@ -181,7 +167,9 @@ $db->close();
             <!-- CALENDÁRIO (RETRÁTIL) -->
             <details class="card" style="border-top-color: #c0392b;" open id="detailsCalendar">
                 <summary>
-                    <h2>📅 Visão Mensal (Excluídos)</h2>
+                    <div class="summary-content">
+                        <h2>📅 Visão Mensal (Excluídos)</h2>
+                    </div>
                     <div class="toggle-icon"></div>
                 </summary>
                 <div class="card-content">
@@ -191,9 +179,11 @@ $db->close();
 
             <!-- TABELA DE RESUMO (RETRÁTIL) -->
             <?php if (count($summaryData) > 0): ?>
-            <details class="card" open>
+            <details class="card" style="border-top-color: #c0392b;" open>
                 <summary>
-                    <h2>⏱️ Resumo de Horas Excluídas</h2>
+                    <div class="summary-content">
+                        <h2>⏱️ Resumo de Horas Excluídas</h2>
+                    </div>
                     <div class="toggle-icon"></div>
                 </summary>
                 <div class="card-content">
