@@ -96,19 +96,6 @@ $db->close();
     <!-- FullCalendar -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     
-    <style>
-        /* CSS Específico do Form */
-        .filter-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end; }
-        .input-group { display: flex; flex-direction: column; }
-        .input-group label { font-weight: bold; margin-bottom: 5px; color: #555; }
-        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-        .btn-filter { background: #333; color: #fff; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; height: 38px; width: 100%; }
-        .btn-filter:hover { background: #000; }
-        
-        /* Ajuste do Título dentro do Summary para ficar igual ao ADM */
-        .card summary h2 { margin: 0; font-size: 1.4rem; color: #1b9aaa; }
-        .card summary { display: flex; justify-content: space-between; align-items: center; }
-    </style>
 </head>
 
 <body>

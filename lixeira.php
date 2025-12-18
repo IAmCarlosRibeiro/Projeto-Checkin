@@ -21,7 +21,8 @@ $summaryData = [];
 $showResults = false;
 
 // Formatação
-function formatarDuracao($duracao) {
+function formatarDuracao($duracao)
+{
     $horas = floor($duracao / 3600);
     $minutos = floor(($duracao / 60) % 60);
     $segundos = $duracao % 60;
@@ -42,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 FROM lixeira AS l 
                 INNER JOIN usuarios AS u ON l.cpf = u.cpf 
                 WHERE (date(l.entrada) >= :start_date AND date(l.entrada) <= :end_date)";
-        
+
         if (!empty($cpf)) $sql .= " AND l.cpf = :cpf";
 
         $stmt = $db->prepare($sql);
@@ -89,48 +90,56 @@ $db->close();
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lixeira</title>
-    
+
     <!-- CSS da Dashboard -->
     <link rel="stylesheet" href="./styles/stylerelatorio.css">
     <link rel="shortcut icon" href="./styles/clock.ico" type="image/x-icon">
 
     <!-- FullCalendar -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-    
+
     <style>
-        /* Título específico da Lixeira */
-        .card summary h2 { margin: 0; font-size: 1.4rem; color: #c0392b; }
-        .summary-content { display: flex; align-items: center; width: 100%; }
-        
         /* Botão de busca vermelho */
-        .btn-filter-trash { 
-            background: #c0392b; color: #fff; border: none; padding: 10px; border-radius: 5px; 
-            cursor: pointer; font-weight: bold; height: 42px; width: 100%; transition: background 0.3s;
+        .btn-filter-trash {
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            height: 42px;
+            width: 100%;
+            transition: background 0.3s;
         }
-        .btn-filter-trash:hover { background: #a93226; }
+
+        .btn-filter-trash:hover {
+            background: #a93226;
+        }
     </style>
 </head>
 
 <body>
     <div class="main-container">
-        
+
         <!-- HEADER -->
         <div class="header-section">
-            <div class="header-title">
+            <div>
                 <h1 style="color: #c0392b;">🗑️ Lixeira</h1>
                 <span style="color: #666; font-size: 0.9rem;">Histórico de pontos excluídos</span>
             </div>
-            
+
             <div class="header-actions">
                 <?php if ($isAdmin): ?>
                     <!-- Botão Voltar (Apenas para Admin) -->
                     <a href="adm.php" class="btn-back">← Dashboard</a>
                 <?php endif; ?>
-                
+
                 <!-- Botão Sair (Para todos) -->
                 <a href="logout.php" class="btn-logout">Sair</a>
             </div>
@@ -163,7 +172,7 @@ $db->close();
         </div>
 
         <?php if ($showResults): ?>
-            
+
             <!-- CALENDÁRIO (RETRÁTIL) -->
             <details class="card" style="border-top-color: #c0392b;" open id="detailsCalendar">
                 <summary>
@@ -179,36 +188,36 @@ $db->close();
 
             <!-- TABELA DE RESUMO (RETRÁTIL) -->
             <?php if (count($summaryData) > 0): ?>
-            <details class="card" style="border-top-color: #c0392b;" open>
-                <summary>
-                    <div class="summary-content">
-                        <h2>⏱️ Resumo de Horas Excluídas</h2>
-                    </div>
-                    <div class="toggle-icon"></div>
-                </summary>
-                <div class="card-content">
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr style="background:#c0392b; color:white;">
-                                    <th style="background:#c0392b; color:white;">Nome</th>
-                                    <th style="background:#c0392b; color:white;">CPF</th>
-                                    <th style="background:#c0392b; color:white;">Total de Horas</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($summaryData as $data): ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($data['nome']); ?></td>
-                                        <td><?php echo htmlspecialchars($data['cpf']); ?></td>
-                                        <td><strong><?php echo formatarDuracao($data['duracao_total']); ?></strong></td>
+                <details class="card" style="border-top-color: #c0392b;" open>
+                    <summary>
+                        <div class="summary-content">
+                            <h2>⏱️ Resumo de Horas Excluídas</h2>
+                        </div>
+                        <div class="toggle-icon"></div>
+                    </summary>
+                    <div class="card-content">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr style="background:#c0392b; color:white;">
+                                        <th style="background:#c0392b; color:white;">Nome</th>
+                                        <th style="background:#c0392b; color:white;">CPF</th>
+                                        <th style="background:#c0392b; color:white;">Total de Horas</th>
                                     </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($summaryData as $data): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($data['nome']); ?></td>
+                                            <td><?php echo htmlspecialchars($data['cpf']); ?></td>
+                                            <td><strong><?php echo formatarDuracao($data['duracao_total']); ?></strong></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            </details>
+                </details>
             <?php else: ?>
                 <div class="card">
                     <div class="card-content" style="padding:20px; text-align:center; color:#666;">
@@ -224,8 +233,8 @@ $db->close();
     <script>
         // Máscara CPF
         var numberInput = document.getElementById("cpf");
-        if(numberInput){
-            numberInput.addEventListener("input", function () {
+        if (numberInput) {
+            numberInput.addEventListener("input", function() {
                 var v = this.value.replace(/\D/g, "");
                 v = v.replace(/(\d{3})(\d)/, "$1.$2");
                 v = v.replace(/(\d{3})(\d)/, "$1.$2");
@@ -244,8 +253,17 @@ $db->close();
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
                     locale: 'pt-br',
-                    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listWeek' },
-                    buttonText: { today: 'Hoje', month: 'Mês', week: 'Semana', list: 'Lista' },
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,listWeek'
+                    },
+                    buttonText: {
+                        today: 'Hoje',
+                        month: 'Mês',
+                        week: 'Semana',
+                        list: 'Lista'
+                    },
                     events: eventsData,
                     height: 'auto',
                     eventClick: function(info) {
@@ -256,16 +274,18 @@ $db->close();
                         alert('REGISTRO EXCLUÍDO\n\nFuncionário: ' + nome + '\nEntrada: ' + entrada + '\nSaída: ' + saida);
                     }
                 });
-                
+
                 if (eventsData.length > 0) calendar.gotoDate(eventsData[0].start);
-                
+
                 calendar.render();
 
                 // FIX: Redesenhar calendário ao abrir a aba
-                if(detailsEl) {
+                if (detailsEl) {
                     detailsEl.addEventListener("toggle", function() {
                         if (this.open) {
-                            setTimeout(function(){ calendar.updateSize(); }, 50);
+                            setTimeout(function() {
+                                calendar.updateSize();
+                            }, 50);
                         }
                     });
                 }
@@ -273,4 +293,5 @@ $db->close();
         });
     </script>
 </body>
+
 </html>
