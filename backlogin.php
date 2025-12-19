@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['logged_in2'] = true; // Permissão Lixeira
             $_SESSION['admin_nome'] = $user['nome'];
             
-            header("Location: adm.php");
+            header("Location: admin.php");
             exit;
 
         } elseif ($nivel == 2) {

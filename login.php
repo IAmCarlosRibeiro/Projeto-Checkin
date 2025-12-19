@@ -1,9 +1,16 @@
 <?php
 session_start();
 
-// Se já estiver logado, redireciona para o painel
+// 1. Se for ADMIN, manda pro Dashboard
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-    header("Location: adm.php");
+    header("Location: admin.php");
+    exit;
+}
+
+// 2. Se for MODERADOR, manda pra Lixeira
+// (O Admin também tem logged_in2, mas ele cai no if de cima primeiro, então funciona)
+if (isset($_SESSION['logged_in2']) && $_SESSION['logged_in2'] === true) {
+    header("Location: lixeira.php");
     exit;
 }
 ?>

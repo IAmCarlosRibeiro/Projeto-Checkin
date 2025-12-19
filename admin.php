@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($redirect) {
         $qs = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
-        header("Location: adm.php" . $qs);
+        header("Location: admin.php" . $qs);
         exit;
     }
 }
@@ -116,7 +116,7 @@ $db->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin</title>
-    <link rel="stylesheet" href="./styles/styleadm.css">
+    <link rel="stylesheet" href="./styles/styleadmin.css">
     <link rel="shortcut icon" href="./styles/clock.ico" type="image/x-icon">
     <script>
         function stopProp(e) { e.stopPropagation(); }

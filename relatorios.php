@@ -1,12 +1,6 @@
 <?php
 session_start();
 
-// --- VERIFICAÇÃO DE LOGIN ---
-if ((!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) && (!isset($_SESSION['logged_in2']) || $_SESSION['logged_in2'] !== true)) {
-    header("Location: login.php");
-    exit;
-}
-
 $dbPath = "./DB/db_pontos.db";
 $db = new SQLite3($dbPath);
 date_default_timezone_set('America/Sao_Paulo');

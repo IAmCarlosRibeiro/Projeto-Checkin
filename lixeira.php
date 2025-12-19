@@ -137,7 +137,7 @@ $db->close();
             <div class="header-actions">
                 <?php if ($isAdmin): ?>
                     <!-- Botão Voltar (Apenas para Admin) -->
-                    <a href="adm.php" class="btn-back">← Dashboard</a>
+                    <a href="admin.php" class="btn-back">← Dashboard</a>
                 <?php endif; ?>
 
                 <!-- Botão Sair (Para todos) -->

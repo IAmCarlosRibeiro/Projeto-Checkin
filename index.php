@@ -18,7 +18,7 @@ session_start();
         <div class="form">
             <div class="top-buttons">
                 <a href="relatorios.php" class="btn-top">Relatórios</a>
-                <a href="adm.php" class="btn-top">Dashboard</a>
+                <a href="admin.php" class="btn-top">Dashboard</a>
             </div>
 
             <form action="backpontos.php" method="post" id="batepontoForm">
