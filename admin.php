@@ -15,6 +15,7 @@ $countUsers = $db->querySingle("SELECT COUNT(*) FROM usuarios");
 $countWorking = $db->querySingle("SELECT COUNT(*) FROM temp");
 $today = date('Y-m-d');
 $countPontosHoje = $db->querySingle("SELECT COUNT(*) FROM pontos WHERE date(entrada) = '$today'");
+$countTotalPontos = $db->querySingle("SELECT COUNT(*) FROM pontos");
 
 // --- PROCESSAMENTO POST ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -166,6 +167,7 @@ $db->close();
             <div class="stat-card blue"><div class="stat-info"><h3><?php echo $countUsers; ?></h3><p>Funcionários</p></div><div class="stat-icon">👥</div></div>
             <div class="stat-card orange"><div class="stat-info"><h3><?php echo $countWorking; ?></h3><p>Trabalhando Agora</p></div><div class="stat-icon">⏳</div></div>
             <div class="stat-card green"><div class="stat-info"><h3><?php echo $countPontosHoje; ?></h3><p>Pontos Hoje</p></div><div class="stat-icon">✅</div></div>
+            <div class="stat-card black"><div class="stat-info"><h3><?php echo $countTotalPontos; ?></h3><p>Total de Pontos</p></div><div class="stat-icon">📅</div></div>
         </div>
 
         <!-- ABA 1: FUNCIONÁRIOS EM TURNO -->
