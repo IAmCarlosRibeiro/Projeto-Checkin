@@ -1,5 +1,16 @@
+<!--
+"""
+    Ponto Online
+    Copyright (c) 2026 Carlos Eduardo Santos Ribeiro.
+    All Rights Reserved.
+
+    This software is PROPRIETARY. Use is subject to the terms in the LICENSE file.
+    Unauthorized distribution, modification, or commercial use is strictly prohibited.
+"""
+-->
+
 <?php
-if ($_SERVER["HTTP_X_CRON_AUTH"] != "111313fa7a549cea71469bfab796a058") {
+if ($_SERVER["HTTP_X_CRON_AUTH"] != "") {
     die("Acesso não Autorizado");
 }
 

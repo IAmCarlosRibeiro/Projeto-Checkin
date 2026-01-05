@@ -5,7 +5,7 @@
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 ![PHP](https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![Badge License](https://img.shields.io/badge/LICENSE-PROPRIETARY-red?style=for-the-badge)
 
 Um sistema completo de controle de jornada de trabalho (Time Tracking), focado em segurança, auditoria e facilidade de uso. O projeto combina um **Quiosque de Ponto** para funcionários (Front-end) com um **Painel Administrativo** robusto (Back-end) para gestão de RH.
 
@@ -124,8 +124,13 @@ Email: crbrdev@gmail.com
 
 ---
 
-### 📝 Licença
-##### Este projeto está sob a licença GPL-3.0.
+## ⚖️ Licença
+
+Este projeto é protegido por direitos autorais.
+**Você pode:** Baixar e utilizar o aplicativo para uso pessoal.
+**Você NÃO pode:** Modificar o código, distribuir cópias ou usar para fins comerciais sem permissão explícita do autor.
+
+Consulte o arquivo `LICENSE` para mais detalhes.
 
 ---
 

@@ -1,3 +1,14 @@
+<!--
+"""
+    Ponto Online
+    Copyright (c) 2026 Carlos Eduardo Santos Ribeiro.
+    All Rights Reserved.
+
+    This software is PROPRIETARY. Use is subject to the terms in the LICENSE file.
+    Unauthorized distribution, modification, or commercial use is strictly prohibited.
+"""
+-->
+
 <?php
 session_start();
 date_default_timezone_set('America/Sao_Paulo');
